@@ -8,8 +8,6 @@ class RenderObject(object):
 
     def __init__(self, **kwargs):
         self.kwargs = kwargs
-        from pprint import pprint
-        pprint(kwargs)
 
     def render(self):
         if not self.template:

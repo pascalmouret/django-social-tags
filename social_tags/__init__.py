@@ -3,8 +3,7 @@ __author__ = 'Pascal Mouret'
 __version__ = '0.1a.0'
 
 
-from social import networks
-from social.utils import get_class
+from social_tags import networks
 
 
 class MetaObject(object):
@@ -16,6 +15,5 @@ class MetaObject(object):
     def objects(self):
         objects = []
         for type, object in networks.AVAILABLE.iteritems():
-            print object
-            objects.append(get_class(object)(**self.settings))
+            objects.append(getattr(networks, object)(**self.settings))
         return objects

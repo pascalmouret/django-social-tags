@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from social import settings
+from social_tags import settings
 
 
 DEFAULT_SETTINGS = {
