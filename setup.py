@@ -48,7 +48,7 @@ setup(
     classifiers=CLASSIFIERS,
     platforms=['OS Independent'],
     install_requires=REQUIREMENTS,
-    packages=['social_tags', 'social_tags.templatetags', 'social_tags.migrations'],
+    packages=['social_tags', 'social_tags.templatetags',],
     include_package_data=True,
     zip_safe=False
 )
