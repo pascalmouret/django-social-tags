@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Pascal Mouret'
-__version__ = '0.1a.0'
+__version__ = '0.2a.0'
 
 
 from social_tags import networks

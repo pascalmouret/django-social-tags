@@ -14,6 +14,7 @@ DESCRIPTION = 'Social meta-tag handler for Django.'
 README = 'README.md'
 
 REQUIREMENTS = [
+	'django-sekizai',
 ]
 
 CLASSIFIERS = [
