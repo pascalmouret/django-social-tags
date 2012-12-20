@@ -3,13 +3,12 @@ from social_tags.objects import RenderObject
 
 
 AVAILABLE = {
-    'facebook': 'Facebook',
-    'google': 'Google',
+    'opengraph': 'OpenGraph',
 }
 
+class OpenGraph(RenderObject):
+    template = 'social_tags/networks/opengraph.html'
 
-class Facebook(RenderObject):
-    template = 'social_tags/networks/facebook.html'
-
-class Google(RenderObject):
-    template = 'social_tags/networks/google.html'
+    def prepare_context(self, context):
+        context['locales'] = [l for l in context['locales'] if l != context['locale']]
+        return context

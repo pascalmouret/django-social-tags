@@ -4,21 +4,51 @@ from django.template.loader import get_template
 from django.template.context import Context
 
 from sekizai.templatetags.sekizai_tags import AddData
+from classytags.core import Options
+from classytags.arguments import Argument
+from classytags.helpers import InclusionTag
 
-from social_tags import MetaObject, settings
+from social_tags import networks, settings
 
 
 register = template.Library()
 
 
-@register.simple_tag(takes_context=True)
-def render_meta_tags(context, data):
-    args = context['social_tags']
-    for key, value in data:
-        args[key] = value
-    t = get_template('social_tags/meta.html')
-    c = Context({'objects': MetaObject(args).objects})
-    return t.render(c)
+class MetaObject(object):
+
+    def __init__(self, kwargs):
+        self.kwargs = kwargs
+
+    @property
+    def objects(self):
+        objects = []
+        for type, object in networks.AVAILABLE.iteritems():
+            objects.append(getattr(networks, object)(**self.kwargs))
+        return objects
+
+
+class RenderMetaTags(InclusionTag):
+    name = 'render_meta_tags'
+    template = 'social_tags/meta.html'
+
+    options = Options(
+        Argument('data'),
+    )
+
+    def get_context(self, context, data):
+        kwargs = context['social_tags']
+        kwargs.update(self.get_request_data(context['request']))
+        for key, value in data:
+            kwargs[key] = value
+        kwargs['request'] = context['request']
+        return {'objects': MetaObject(kwargs).objects}
+
+    def get_request_data(self, request):
+        data = {}
+        data['url'] = request.build_absolute_uri()
+        data['locale'] = request.LANGUAGE_CODE
+        return data
+register.tag(RenderMetaTags)
 
 
 class SetTag(AddData):

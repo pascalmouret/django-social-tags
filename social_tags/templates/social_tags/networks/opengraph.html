@@ -1,0 +1,12 @@
+<!-- open graph -->
+{# obligatory tags #}
+{% if title %}<meta property="og:title" content="{{ title }}" />{% endif %}
+{% if type %}<meta property="og:type" content="{{ type }}" />{% endif %}
+{% if image %}<meta property="og:image" content="{{ image }}" />{% endif %}
+{% if url %}<meta property="og:url" content="{{ url }}" />{% endif %}
+
+{# locale tags #}
+{% if locale %}<meta property="og:locale" content="{{ locale }}" />{% endif %}
+{% for locale in locales %}
+    <meta property="og:locale:alternate" content="{{ locale }}" />
+{% endfor %}
