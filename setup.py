@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from setuptools import setup
-import social_tags
+from setuptools import setup, find_packages
 
 import os
 
 
-VERSION = social_tags.__version__
-AUTHOR = social_tags.__author__
+APP = 'social_tags'
+VERSION = __import__(APP).__version__
+AUTHOR = 'Pascal Mouret'
 NAME = 'django-social-tags'
 URL = 'https://github.com/pascalmouret/django-social'
 AUTHOR_MAIL = 'pascal.mouret@divio.ch'
@@ -48,7 +48,7 @@ setup(
     classifiers=CLASSIFIERS,
     platforms=['OS Independent'],
     install_requires=REQUIREMENTS,
-    packages=['social_tags', 'social_tags.templatetags',],
+    packages=find_packages(),
     include_package_data=True,
     zip_safe=False
 )
