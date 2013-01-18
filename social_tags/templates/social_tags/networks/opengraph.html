@@ -10,3 +10,10 @@
 {% for locale in locales %}
     <meta property="og:locale:alternate" content="{{ locale }}" />
 {% endfor %}
+
+{# custom #}
+{% if opengraph %}
+{% for key, value in opengraph.items %}
+    <meta property="og:{{ key }}" content="{{ value }}" />
+{% endfor %}
+{% endif %}

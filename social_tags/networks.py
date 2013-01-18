@@ -10,5 +10,7 @@ class OpenGraph(RenderObject):
     template = 'social_tags/networks/opengraph.html'
 
     def prepare_context(self, context):
+        for key, value in context.iteritems():
+            context[key] = value
         context['locales'] = [l for l in context['locales'] if l != context['locale']]
         return context

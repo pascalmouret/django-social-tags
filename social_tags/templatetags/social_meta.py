@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from django import template
-from django.template.loader import get_template
-from django.template.context import Context
+from django.contrib.sites.models import get_current_site
 
 from sekizai.templatetags.sekizai_tags import AddData
 from classytags.core import Options
@@ -9,6 +8,7 @@ from classytags.arguments import Argument
 from classytags.helpers import InclusionTag
 
 from social_tags import networks, settings
+from social_tags.defaults import DEFAULT_SETTINGS
 
 
 register = template.Library()
@@ -27,6 +27,10 @@ class MetaObject(object):
         return objects
 
 
+#######################################
+# Default Tags
+#######################################
+
 class RenderMetaTags(InclusionTag):
     name = 'render_meta_tags'
     template = 'social_tags/meta.html'
@@ -36,17 +40,25 @@ class RenderMetaTags(InclusionTag):
     )
 
     def get_context(self, context, data):
-        kwargs = context['social_tags']
-        kwargs.update(self.get_request_data(context['request']))
-        for key, value in data:
-            kwargs[key] = value
+        kwargs = self.get_request_data(context['request'])
+        kwargs.update(DEFAULT_SETTINGS)
+        kwargs.update(context['social_tags'])
+        for key, value, network in data:
+            if network:
+                if not hasattr(kwargs, network):
+                    kwargs[network] = {}
+                kwargs[network][key] = value
+            else:
+                kwargs[key] = value
         kwargs['request'] = context['request']
         return {'objects': MetaObject(kwargs).objects}
 
     def get_request_data(self, request):
-        data = {}
-        data['url'] = request.build_absolute_uri()
-        data['locale'] = request.LANGUAGE_CODE
+        data = {
+            'url': request.build_absolute_uri(),
+            'locale': request.LANGUAGE_CODE,
+            'title': get_current_site(request).name,
+        }
         return data
 register.tag(RenderMetaTags)
 
@@ -56,6 +68,20 @@ class SetTag(AddData):
 
     def render_tag(self, context, key, value):
         varname = getattr(settings, 'SEKIZAI_VARNAME', 'SEKIZAI_CONTENT_HOLDER')
-        context[varname]['social_tags'].append((key, value))
+        context[varname]['social_tags'].append((key, value, None))
         return ''
 register.tag(SetTag)
+
+
+#######################################
+# Open Graph
+#######################################
+
+class CustomOpenGraph(AddData):
+    name = 'opengraph'
+
+    def render_tag(self, context, key, value):
+        varname = getattr(settings, 'SEKIZAI_VARNAME', 'SEKIZAI_CONTENT_HOLDER')
+        context[varname]['social_tags'].append((key, value, 'opengraph'))
+        return ''
+register.tag(CustomOpenGraph)
