@@ -8,7 +8,6 @@ from classytags.arguments import Argument
 from classytags.helpers import InclusionTag
 
 from social_tags import networks, settings
-from social_tags.defaults import DEFAULT_SETTINGS
 
 
 register = template.Library()
@@ -41,7 +40,6 @@ class RenderMetaTags(InclusionTag):
 
     def get_context(self, context, data):
         kwargs = self.get_request_data(context['request'])
-        kwargs.update(DEFAULT_SETTINGS)
         kwargs.update(context['social_tags'])
         for key, value, network in data:
             if network:
@@ -57,7 +55,7 @@ class RenderMetaTags(InclusionTag):
         data = {
             'url': request.build_absolute_uri(),
             'locale': request.LANGUAGE_CODE,
-            'title': get_current_site(request).name,
+            'title': settings.DEFAULT_TITLE or get_current_site(request).name,
         }
         return data
 register.tag(RenderMetaTags)
