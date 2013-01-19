@@ -1,0 +1,17 @@
+<!-- twitter -->
+{# defaults #}
+<meta name="twitter:card" content="{{ card }}" />
+<meta name="twitter:url" content="{{ url }}" />
+<meta name="twitter:title" content="{{ title }}" />
+<meta name="twitter:image" content="{{ image }}" />
+<meta name="twitter:description" content="{{ description }}" />
+
+{# photo card #}
+{% if twitter.card == 'photo' %}
+    <meta name="twitter:image:width" content="{{ twitter.width }}" />
+    <meta name="twitter:image:height" content="{{ twitter.height }}" />
+{% endif %}
+
+{# player #}
+{% if twitter.card == 'player' %}
+{% endif %}
