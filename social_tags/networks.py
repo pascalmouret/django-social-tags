@@ -2,16 +2,14 @@
 from django.core.files.images import ImageFile
 
 from social_tags.objects import RenderObject
+from social_tags import settings
 
 
 class SocialTagsValidationError(Exception):
     pass
 
 
-AVAILABLE = {
-    'opengraph': 'OpenGraph',
-    'twitter': 'Twitter',
-}
+AVAILABLE = {}
 
 
 class OpenGraph(RenderObject):
@@ -22,6 +20,8 @@ class OpenGraph(RenderObject):
             context[key] = value
         context['locales'] = [l for l in context['locales'] if l != context['locale']]
         return context
+if settings.ENABLE_OPENGRAPH:
+    AVAILABLE.update({'opengraph': 'OpenGraph'})
 
 
 class Twitter(RenderObject):
@@ -62,3 +62,5 @@ class Twitter(RenderObject):
                 raise SocialTagsValidationError('Player, width and height are required for player card')
             if context['twitter']['stream'] and not context['twitter']['content_type']:
                 raise SocialTagsValidationError('If stream is set, content_type is required.')
+if settings.ENABLE_TWITTER:
+    AVAILABLE.update({'twitter': 'Twitter'})
