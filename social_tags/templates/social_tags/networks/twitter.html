@@ -3,8 +3,8 @@
 <meta name="twitter:card" content="{{ card }}" />
 <meta name="twitter:url" content="{{ url }}" />
 <meta name="twitter:title" content="{{ title }}" />
-<meta name="twitter:image" content="{{ image }}" />
-<meta name="twitter:description" content="{{ description }}" />
+{% if image %}<meta name="twitter:image" content="{{ image }}" />{% endif %}
+{% if description %}<meta name="twitter:description" content="{{ description }}" />{% endif %}
 
 {# photo card #}
 {% if twitter.card == 'photo' %}
@@ -14,4 +14,9 @@
 
 {# player #}
 {% if twitter.card == 'player' %}
+    <meta name="twitter:player" content="{{ twitter.player }}" />
+    <meta name="twitter:player:width" content="{{ twitter.width }}" />
+    <meta name="twitter:player:height" content="{{ twitter.height }}" />
+    <meta name="twitter:player:stream" content="{{ twitter.stream }}" />
+    <meta name="twitter:player:content_type" content="{{ twitter.content_type }}" />
 {% endif %}

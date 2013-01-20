@@ -38,11 +38,22 @@ class Twitter(RenderObject):
             pic = ImageFile(open(context['image']), 'r')
         except IOError:
             return context
-        if not hasattr(context, 'twitter'):
-            context['twitter'] = {}
         context['twitter']['width'] = pic.width
         context['twitter']['height'] = pic.height
         return context
 
     def get_player_context(self, context):
-        raise NotImplementedError('Not yet implemented.')
+        return context
+
+    def debug(self, context):
+        if context['card'] == 'summary':
+            if not context['description']:
+                raise Exception('Description is required for summary card.')
+        if context['card'] == 'photo':
+            if not context['image']:
+                raise Exception('Image is required for photo card')
+        if context['card'] == 'player':
+            if not context['twitter']['player'] or not context['twitter']['width'] or not context['twitter']['height']:
+                raise Exception('Player, width and height are required for player card')
+            if context['twitter']['stream'] and not context['twitter']['content_type']:
+                raise Exception('If stream is set, content_type is required.')

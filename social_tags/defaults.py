@@ -8,4 +8,9 @@ DEFAULT_SETTINGS = {
     'image': settings.DEFAULT_IMAGE,
     'locales': settings.DEFAULT_LOCALES,
     'description': settings.DEFAULT_DESCRIPTION,
+    'twitter': {
+        'site_id': settings.DEFAULT_TWITTER_SITE_ID,
+        'creator_id': settings.DEFAULT_TWITTER_CREATOR_ID,
+    }
 }
+
