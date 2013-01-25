@@ -4,10 +4,10 @@ from django.contrib.sites.models import get_current_site
 
 from sekizai.templatetags.sekizai_tags import AddData
 from classytags.core import Options
-from classytags.arguments import Argument
-from classytags.helpers import InclusionTag
+from classytags.helpers import InclusionTag, Tag
 
 from social_tags import networks, settings
+from social_tags.utils import set_sekizai_data
 
 
 register = template.Library()
@@ -65,10 +65,31 @@ class SetTag(AddData):
     name = 'set_tag'
 
     def render_tag(self, context, key, value):
-        varname = getattr(settings, 'SEKIZAI_VARNAME', 'SEKIZAI_CONTENT_HOLDER')
-        context[varname]['social_tags'].append((key, value, None))
+        set_sekizai_data(context, key, value)
         return ''
 register.tag(SetTag)
+
+
+class BaseSetter(Tag):
+    arguments = {}
+
+    def __init__(self, *args, **kwargs):
+        options = ()
+        for setting in self.settings:
+            self.arguments[setting[0].name] = setting[1]
+            options = options + (setting[0],)
+        self.options = Options(*options)
+        super(BaseSetter, self).__init__(*args, **kwargs)
+
+    def render(self, context, **kwargs):
+        items = self.kwargs.items()
+        kwargs = dict([(key, value.resolve(context)) for key, value in items])
+        kwargs.update(self.blocks)
+        for key, value in kwargs.items():
+            print '%s %s' % (key, value)
+            if not value == {}:
+                set_sekizai_data(context, key, value[key], self.arguments[key])
+        return self.render_tag(context, **kwargs)
 
 
 #######################################
@@ -79,7 +100,7 @@ class CustomOpenGraph(AddData):
     name = 'opengraph'
 
     def render_tag(self, context, key, value):
-        varname = getattr(settings, 'SEKIZAI_VARNAME', 'SEKIZAI_CONTENT_HOLDER')
-        context[varname]['social_tags'].append((key, value, 'opengraph'))
+        set_sekizai_data(context, key, value, 'opengraph')
         return ''
 register.tag(CustomOpenGraph)
+
