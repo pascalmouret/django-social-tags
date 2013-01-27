@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.core.files.images import ImageFile
 
-from social_tags.networks import Network, networks
+from social_tags.networks import Network, networks, SocialTagsValidationError
 
 
 class Twitter(Network):
