@@ -36,3 +36,43 @@ To modify some value out of a view, simply modify the `context['social_tags']` d
 
 ### Template
 After loading the `social_meta` tag library, you can set attributes via `{% set_tag attribute value %}`
+
+## Custom Networks
+You need a network not yet included? No problem, you can easily write your own!
+
+Simply add the file `social_tags_networks` to a package in `INSTALLED_APPS` and add a `Network` object. Since code says it best, here a simple example:
+
+```python
+
+from social_tags.networks import Network, networks, SocialTagsValidationError
+
+class HelloWorld(Network):
+	name = 'hello_world'
+	template = 'networks/hello_world.html'
+	
+	def prepare_context(self, context):
+		'''
+		The context contains all collected data from defaults, context and
+		templates.
+		Network specific data is stored in context[name].
+		'''
+		context['description'] = 'I wan\'t my own description!'
+		context['hello_world']['text'] = 'Hello World'
+		return context
+		
+	def debug(self, context):
+		'''
+		This will only be executed if DEBUG = True.
+		'''
+		if not hasattr(context, 'photo'):
+			raise SocialTagsValidationError('A photo is required!')
+networks.register(HelloWorld)
+```
+
+You will of course also need a template, which could look something like this:
+
+```html
+<meta name="helloworld" content="{{ hello_world.text }}" />
+```
+
+This is still experimental, so there could still be a lot of changes.
