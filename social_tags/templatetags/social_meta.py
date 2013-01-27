@@ -6,7 +6,8 @@ from sekizai.templatetags.sekizai_tags import AddData
 from classytags.core import Options
 from classytags.helpers import InclusionTag, Tag
 
-from social_tags import networks, settings
+from social_tags import settings
+from social_tags.networks import networks
 from social_tags.utils import set_sekizai_data
 
 
@@ -15,14 +16,14 @@ register = template.Library()
 
 class MetaObject(object):
 
-    def __init__(self, kwargs):
-        self.kwargs = kwargs
+    def __init__(self, **context):
+        self.context = context
 
     @property
     def objects(self):
         objects = []
-        for type, object in networks.AVAILABLE.iteritems():
-            objects.append(getattr(networks, object)(**self.kwargs))
+        for name, cls in networks.get_enabled().items():
+            objects.append(cls(**self.context))
         return objects
 
 
@@ -49,7 +50,7 @@ class RenderMetaTags(InclusionTag):
             else:
                 kwargs[key] = value
         kwargs['request'] = context['request']
-        return {'objects': MetaObject(kwargs).objects}
+        return {'objects': MetaObject(**kwargs).objects}
 
     def get_request_data(self, request):
         data = {
@@ -86,7 +87,6 @@ class BaseSetter(Tag):
         kwargs = dict([(key, value.resolve(context)) for key, value in items])
         kwargs.update(self.blocks)
         for key, value in kwargs.items():
-            print '%s %s' % (key, value)
             if not value == {}:
                 set_sekizai_data(context, key, value[key], self.arguments[key])
         return self.render_tag(context, **kwargs)
