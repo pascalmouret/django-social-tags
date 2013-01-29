@@ -17,6 +17,8 @@
     <meta name="twitter:player" content="{{ twitter.player }}" />
     <meta name="twitter:player:width" content="{{ twitter.width }}" />
     <meta name="twitter:player:height" content="{{ twitter.height }}" />
-    <meta name="twitter:player:stream" content="{{ twitter.stream }}" />
-    <meta name="twitter:player:content_type" content="{{ twitter.content_type }}" />
+    {% if twitter.stream %}
+        <meta name="twitter:player:stream" content="{{ twitter.stream }}" />
+        <meta name="twitter:player:content_type" content="{{ twitter.content_type }}" />
+    {% endif %}
 {% endif %}

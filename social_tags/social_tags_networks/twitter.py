@@ -20,15 +20,17 @@ class Twitter(Network):
         return context
 
     def get_photo_context(self, context):
-        try:
-            pic = ImageFile(open(context['image']), 'r')
-        except IOError:
-            return context
-        context['twitter']['width'] = pic.width
-        context['twitter']['height'] = pic.height
+        if not getattr(context[self.name], 'width', False) or not getattr(context[self.name], 'height', False):
+            try:
+                pic = ImageFile(open(context['image']), 'r')
+            except IOError:
+                return context
+            context['twitter']['width'] = pic.width
+            context['twitter']['height'] = pic.height
         return context
 
     def get_player_context(self, context):
+        # TODO: is there anything we could help with here?
         return context
 
     def debug(self, context):
@@ -37,10 +39,10 @@ class Twitter(Network):
                 raise SocialTagsValidationError('Description is required for summary card.')
         if context['twitter']['card'] == 'photo':
             if not context['image']:
-                raise SocialTagsValidationError('Image is required for photo card')
+                raise SocialTagsValidationError('Image is required for photo card.')
         if context['twitter']['card'] == 'player':
             if not context['twitter']['player'] or not context['twitter']['width'] or not context['twitter']['height']:
-                raise SocialTagsValidationError('Player, width and height are required for player card')
+                raise SocialTagsValidationError('Player, width and height are required for player card.')
             if context['twitter']['stream'] and not context['twitter']['content_type']:
                 raise SocialTagsValidationError('If stream is set, content_type is required.')
 networks.register(Twitter)
