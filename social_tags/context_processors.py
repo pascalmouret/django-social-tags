@@ -2,5 +2,5 @@
 
 
 def social(request):
-    from social_tags.settings import DEFAULT_CONTEXT
-    return {'social_tags': DEFAULT_CONTEXT}
+    from social_tags.networks import networks
+    return {'social_tags': networks.get_defaults()}

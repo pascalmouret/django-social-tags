@@ -3,6 +3,7 @@ from classytags.core import Options
 from classytags.helpers import Tag
 
 from social_tags.utils import set_sekizai_data
+from social_tags.networks import networks
 
 
 class MetaObject(object):
@@ -13,7 +14,7 @@ class MetaObject(object):
     @property
     def objects(self):
         objects = []
-        for name, cls in networks.get_enabled().items():
+        for cls in networks.get_enabled():
             objects.append(cls(**self.context))
         return objects
 

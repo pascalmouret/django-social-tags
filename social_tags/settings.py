@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
 
-from social_tags.networks import networks
-
 
 DEFAULT_DEFAULT_TITLE = None
 DEFAULT_DEFAULT_IMAGE = None
@@ -35,6 +33,7 @@ DEFAULT_CONTEXT = {
     'description': DEFAULT_DESCRIPTION,
 }
 
-DEFAULT_CONTEXT.update(networks.get_defaults())
-for network in networks:
-    DEFAULT_CONTEXT[network.name].update(getattr(settings, 'SOCIAL_TAGS_%s' % network.name.upper(), {}))
+def get_network_defaults(network):
+    defaults = network.defaults.copy()
+    defaults.update(getattr(settings, 'SOCIAL_TAGS_%s' % network.name.upper(), {}))
+    return defaults

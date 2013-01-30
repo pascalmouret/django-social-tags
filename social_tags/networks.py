@@ -49,19 +49,19 @@ class NetworkCollection(object):
 
     def get_enabled(self):
         self._load()
-        enabled = {}
+        enabled = ()
         for name, network in self._networks.items():
             if name in settings.ENABLED_NETWORKS:
-                enabled[name] = network
+                enabled = enabled + (network,)
         return enabled
 
     def get_defaults(self):
         self._load()
         if self._defaults:
             return self._defaults
-        self._defaults = {}
-        for network in networks:
-            self._defaults[network.name] = network.defaults
+        self._defaults = settings.DEFAULT_CONTEXT
+        for network in self.get_enabled():
+            self._defaults[network.name] = settings.get_network_defaults(network)
         return self._defaults
 
     def _load(self):

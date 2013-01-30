@@ -8,6 +8,7 @@ from classytags.helpers import InclusionTag, Tag
 
 from social_tags import settings
 from social_tags.utils import set_sekizai_data
+from social_tags.templatetags.helpers import MetaObject
 
 
 register = template.Library()
