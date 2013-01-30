@@ -7,13 +7,18 @@ from social_tags.networks import Network, networks, SocialTagsValidationError
 class Twitter(Network):
     name = 'twitter'
     template = 'social_tags/networks/twitter.html'
+    defaults = {
+        'card': 'summary',
+        'site_id': None,
+        'creator_id': None,
+    }
 
     def prepare_context(self, context):
-        if context['twitter']['card'] == 'summary':
+        if context[self.name]['card'] == 'summary':
             return self.get_summary_context(context)
-        if context['twitter']['card'] == 'photo':
+        if context[self.name]['card'] == 'photo':
             return self.get_photo_context(context)
-        if context['twitter']['card'] == 'player':
+        if context[self.name]['card'] == 'player':
             return self.get_player_context(context)
 
     def get_summary_context(self, context):
@@ -25,8 +30,8 @@ class Twitter(Network):
                 pic = ImageFile(open(context['image']), 'r')
             except IOError:
                 return context
-            context['twitter']['width'] = pic.width
-            context['twitter']['height'] = pic.height
+            context[self.name]['width'] = pic.width
+            context[self.name]['height'] = pic.height
         return context
 
     def get_player_context(self, context):

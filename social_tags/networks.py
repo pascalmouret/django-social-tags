@@ -15,6 +15,7 @@ class SocialTagsValidationError(Exception):
 class Network(object):
     name = 'network'
     template = None
+    defaults = {}
 
     def __init__(self, **context):
         self.context = context
@@ -37,26 +38,36 @@ class Network(object):
 
 
 class NetworkCollection(object):
-    networks = {}
-    module_name = 'social_tags_networks'
+    _networks = {}
+    _module_name = 'social_tags_networks'
 
     _loaded = False
-
-    def __init__(self):
-        self._load_modules()
+    _defaults = None
 
     def register(self, network):
-        self.networks[network.name] = network
+        self._networks[network.name] = network
 
     def get_enabled(self):
-        if not self._loaded:
-            self._load_modules()
-            self._loaded = True
+        self._load()
         enabled = {}
-        for name, network in self.networks.items():
+        for name, network in self._networks.items():
             if name in settings.ENABLED_NETWORKS:
                 enabled[name] = network
         return enabled
+
+    def get_defaults(self):
+        self._load()
+        if self._defaults:
+            return self._defaults
+        self._defaults = {}
+        for network in networks:
+            self._defaults[network.name] = network.defaults
+        return self._defaults
+
+    def _load(self):
+        if not self._loaded:
+            self._load_modules()
+            self._loaded = True
 
     def _load_modules(self):
         from django.conf import settings as dj_settings
@@ -64,7 +75,7 @@ class NetworkCollection(object):
         for app in installed_apps:
             try:
                 p = imp.load_module(app, *imp.find_module(app))
-                imp.load_module(self.module_name, *imp.find_module(self.module_name, p.__path__))
+                imp.load_module(self._module_name, *imp.find_module(self._module_name, p.__path__))
             except ImportError:
                 pass
 networks = NetworkCollection()
